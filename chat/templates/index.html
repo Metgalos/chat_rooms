@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+	{% if requests %}
+        <div class="notifications ">
+            You have {{ requests }} requests to friend!
+            <div class="close-notifications">X</div>
+        </div>
+    {% endif %}
+	<h1 class="header-text">Welcome to chat, {{ username }}! </h1>
+    <div class="index-picture-container">
+        <img id="setting-icon" src="{% static "images/setting-icon.png" %}" alt="setting icon"/>
+        <!-- Картинка пользователя-->
+	    <img id="user-picture" src="{{ request.user.picture.url }}" /><br />
+    </div>
+	<!-- Блок смены картинки-->
+	<div id="change-picture">
+		<span id="change-picture-close">X</span>
+		<img src="{{ request.user.picture.url }}" class="change-detail" />
+		<!-- Загрузка изображения -->
+		<form id="form-change-picture" action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+			<span class="change-picture-text">Change picture: </span><br /><br />
+			<input id="upload_file" type="file" name="upload_file" /><br />
+			<input type="submit" class="btn" value="Change" />
+		</form>
+	</div>
+	<!-- Кнопки управления-->
+	<ul>
+		<li><a href="/friends/" class="round green">Friends<span class="round">That is, if you want to see your friends list.</span></a></li>
+	  	<li><a href="/chats/" class="round red">Message<span class="round">But only if you want to start chatting. </span></a></li>
+		<li><a href="/logout/" class="round yellow">Log Out<span class="round">If you already want to leave us:( </span></a></li>
+	</ul>
+{% endblock content%}
+
+{% block script %}
+<script>
+var loc = window.location;
+
+$(document).ready(function () {
+	// Появление окна смены картинки
+	$("#user-picture").click(function () {
+		$("#change-picture").css("display", "block");
+	});
+	// Проверка на наличие изображения
+	$("#form-change-picture").submit(function () {
+		if ($("#upload_file").val() == ""){
+			return false;
+		} else {
+			return true;
+		}
+	});
+	// Скрытие окна смены картинки
+	$("#change-picture-close").click(function () {
+		$("#change-picture").hide();
+	});
+	$(".close-notifications").click(function () {
+        $(".notifications").hide();
+    });
+
+	$(".notifications").click(function () {
+        window.location.replace('/requests/');
+    });
+
+	$("#setting-icon").click(function () {
+        window.location.replace('/settings/');
+    });
+});
+
+</script>
+{% endblock script %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <a href="/"><img class="home-picture" src="{% static "images/home-icon.png" %}" alt="Icon with home picture" /></a><br />
+	<h1 class="header-text"> Requests to friend: </h1>
+
+    {% for request in requests %}
+        <div class="friend  mx-auto">
+			<div class="friend-picture">
+                <img src="/media/{{ request.from_request.picture }}" alt="Picture with friend's avatar">
+            </div>
+			<div class="friend-info">
+                <h4 class="friend-username"><a href="{% url "detail" username=request.from_request.username %}">{{ request.from_request.username }}</a></h4>
+                <h4>{{ request.from_request.first_name }} {{ request.from_request.last_name }}</h4>
+            </div>
+        </div>
+         <div class="request-buttons">
+             <!-- TODO сделать кнопку принятия или отклонения заявки -->
+             <a href={% url "request_handler" request.from_request.username "accept" %}><button class="accept-button btn btn-home">Accept</button></a>
+             <a href={% url "request_handler" request.from_request.username "decline" %}><button class="decline-button btn btn-home">Decline</button></a>
+         </div>
+    {% endfor %}
+{% endblock content%}

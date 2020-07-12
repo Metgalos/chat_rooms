@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}Login{% endblock page_title %}
+
+
+{% block content %}
+<div id="error">{{ form.non_field_errors }}</div>
+<h1 class="header-text">Log In</h1><br /><br />
+{% if next %}
+<form action="/login/?next={{ next }}" method="post">
+{% else %}
+<form action="/login/" method="post">
+{% endif %}
+	{% csrf_token %}
+	<table class="form-table mx-auto">
+		{% for input in form %}
+			<tr>
+				<td class="table-label">{{ input.label }}</td>
+				<td class="table-input">{{ input }}</td>
+			</tr>	
+		{% endfor %}
+		</table>
+	<input id="submit-btn" class="btn btn-default" type="submit" value="Log In" />
+	<input id="sign-up-btn" class="btn btn-default" type="button" value="Sign Up" />
+</form>
+
+{% endblock content%}
+
+{% block script %}
+<script>
+var errorText = $("#error").text();
+if (errorText !== ''){ alert(errorText); }
+document.getElementById('sign-up-btn').onclick = function () {
+	window.location.replace("/register/")
+}
+</script>
+{% endblock script %}

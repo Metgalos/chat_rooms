@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Кнопка возрата на главную страницу-->
+<a href="/"><img class="home-picture" src="{% static "images/home-icon.png" %}" alt="Icon with home picture" /></a><br />
+<!-- Имя пользователя-->
+<h1 class="header-text">{{ companion.username }}</h1>
+<!-- Окно с диалогом-->
+<div id="chat_box">	
+	{% for message in message_list %}
+	<div class="message">
+		{% if message.author == user %}
+			<img class="user-chat-picture" src="/media/{{ user.picture }}" />
+		{% else %}
+			<img class="user-chat-picture" src="/media/{{ companion.picture }}" />
+		{% endif %}
+			<span></span>
+			<b>{{ message.author }}</b> <span class="small">{{ message.timestamp }}<br />
+			{{ message.content }}</span><br /><br />
+	</div>
+	{% endfor %}
+</div>
+<!-- Форма ввода сообщения и кнопка отправки-->
+<form id="form">{% csrf_token %}
+	<input id="message_text" size="100" />
+	<input id="send_button" type="submit" value="Send" />
+</div>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+
+var loc = window.location
+var wsStart = "ws:"
+// Проверка протокола
+if (loc.protocol == "https:"){
+	wsStart = "wss:"
+}
+
+var endpoint = wsStart + loc.host + loc.pathname
+// Открытие вебсокета
+var socket  = new WebSocket(endpoint)
+var form = $("#form")
+
+var message_text = $("#message_text");
+var send_button = $("#send_button");
+var chat_box = $("#chat_box");
+var message = "";
+var selected_message = false;
+
+// Функции обработки событий вебсокета
+socket.onmessage = function (e) {
+	// Переменная с сообщением
+	var data = JSON.parse(e.data)
+	// Добавление принимаемого сообщения в окно диалога
+	chat_box.append("<div class='message'><b>" + data.author + "</b> " + data.timestamp + "<br />" + data.message + "</div><br /><br />")
+	$("#chat_box").scrollTop($("#chat_box")[0].scrollHeight);
+	
+}
+socket.onopen = function (e) {
+	console.log("open", e);
+	// Проверка сообщения
+	form.submit(function(event){
+		event.preventDefault()
+		var messageInput = $(message_text).val()
+		var finalData = {
+			"message": messageInput, 
+			"author": "{{ user.username }}"
+		}
+		// Отсылка сообщения
+		socket.send(JSON.stringify(finalData))		
+		form[0].reset()
+		$("#chat_box").scrollTop($("#chat_box")[0].scrollHeight);
+	})
+}
+socket.onerror = function (e) {
+	console.log("error", e)
+}
+socket.onclose = function (e) {
+	console.log("close", e)
+}
+// Функция промотки окна с диалогами на последнее сообщение
+$(document).ready(function(){
+
+	$("#chat_box").scrollTop($("#chat_box")[0].scrollHeight);
+
+	$(send_button).click(function(){
+		if (message_text.val().length == 0){ alert("Message has contains at least 1 character"); }
+	});
+})
+</script>
+{% endblock script %}

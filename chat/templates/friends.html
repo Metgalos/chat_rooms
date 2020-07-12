@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<a href="/"><img class="home-picture" src="{% static "images/home-icon.png" %}" alt="Icon with home picture" /></a><br />
+<!-- Строка поиска пользователей-->
+<form action="" method="get">
+	<input class="search" type="text" placeholder="Search friends" name="q"  />
+    <input type="hidden" value="users" name="search">
+	<input type="submit" class="btn" value="Search" />
+</form>
+<h1 class="header-text"> Friends: </h1>
+<!-- Отображение друзей пользователя-->
+{% if friends %}
+	{% for friend in friends %}
+		{% if friend == request.user %}
+		{% else %}
+			<div class="friend mx-auto">
+				<div class="friend-picture">
+					<img src="/media/{{ friend.picture }}" alt="Picture with friend's avatar">
+				</div>
+				<div class="friend-info">
+					<h4 class="friend-username"><a href="{% url "detail" username=friend.username %}">{{ friend.username }}</a></h4>
+				</div>
+			</div>
+		{% endif %}
+	{% endfor %}
+{% elif not q %}
+	<h3>You haven't had friends yet</h3>
+{% endif %}
+<!-- Отображение пользователей найденных с помощью поиска-->
+{% if search %}
+    <hr class=" mx-auto">
+    <h2>Other users:</h2>
+	{% for user in search %}
+		{% if user == request.user or user in friends %}
+		{% else %}
+			<div class="friend  mx-auto">
+				<div class="friend-picture">
+					<img src="/media/{{ user.picture }}" alt="Picture with friend's avatar">
+				</div>
+				<div class="friend-info">
+					<h4 class="friend-username"><a href="{% url "detail" username=user.username %}">{{ user.username }}</a></h4>
+                    <h4>{{ user.first_name }} {{ user.last_name }}</h4>
+				</div>
+			</div>
+		{% endif %}
+	{% endfor %}
+{% endif %}
+
+
+{% endblock %}

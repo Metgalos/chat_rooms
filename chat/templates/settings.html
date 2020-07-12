@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<a href="/"><img class="home-picture" src="{% static "images/home-icon.png" %}" alt="Icon with home picture" /></a><br />
+<!-- Заголовок страницы -->
+<h1 class="header-text"> Settings </h1>
+    <div id="error">{{ form.non_field_errors }}</div>
+<hr class="mx-auto"/>
+{% for key, value in setting.items %}
+<table class="setting-table mx-auto">
+    <tr>
+        <td class="table-label">{{ key }}</td>
+        <td class="table-label">{{ value }}</td>
+        <td><button class="setting-list" >Change</button></td>
+    </tr>
+</table>
+<div class="change-setting">
+   <form action="" method="post">{% csrf_token %}
+       <input type="hidden" value="{{ key }}" name="param"/>
+       <span class="table-label">{{ key }}</span>
+       <input class="margin-all" type="text" name="value"/>
+       <submit><button class="btn">Change</button></submit>
+   </form>
+</div>
+<hr class="mx-auto"/>
+{% endfor %}
+    <button class="btn btn-home change-password"><b>Change password</b></button>
+    <div class="pop-up">
+        <span class="close">X</span><br />
+        <h1 class="header-text">Change password</h1>
+        <form class="mt" action="/settings/" method="post">
+            {% csrf_token %}
+            <input type="hidden" value="password" name="param"/>
+            <table class="form-table mx-auto">
+               {% for input in form %}
+			<tr>
+				<td class="table-label">{% if input.label != 'Username' %}{{ input.label }}{% endif %}</td>
+				<td class="table-input">{{ input }}</td>
+			</tr>
+		{% endfor %}
+            </table>
+            <submit><button class="btn-home btn">Change password</button></submit>
+        </form>
+    </div>
+    <a href="/settings/delete-user/"><button class="btn btn-home"><b>Delete account</b></button></a>
+{% endblock %}
+
+{% block script %}
+<script>
+var loc = window.location;
+
+$(document).ready(function () {
+
+    var errorText = $("#error").text();
+    if (errorText !== ''){
+        alert(errorText);
+        $(".pop-up").css("display", "block");
+    }
+
+    $(".setting-list").click(function() {
+        if ($(this).closest('table').next().css("display") === "none"){
+             $(this).closest('table').next().css("display", "block");
+        }
+        else {  $(this).closest('table').next().css("display", "none");}
+    });
+    $(".change-password").click(function () {
+       $(".pop-up").css("display", "block");
+    });
+    $(".close").click(function () {
+       $(".pop-up").hide();
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<a href="/"><img class="home-picture" src="{% static "images/home-icon.png" %}" alt="Icon with home picture" /></a><br />
+<!-- Картинка пользователя-->
+<img id="user-picture" src="/media/{{ user.picture }}" alt="User's picture" />
+<!-- Имя пользователя-->
+<h2 class="header-text">{{ user.username }}</h2>
+<!-- Информация о пользователе-->
+<div class="detail-info">
+	<table class="mx-auto">
+		<tr><th>First name:</th><th> {{ user.first_name }}</th></tr>
+		<tr><th>Last name:</th><th> {{ user.last_name }}</th></tr>
+		<tr><th>Email:</th><th> {{ user.email }}</th></tr>
+	</table>
+</div>
+<!-- Кнопки управления -->
+<ul>
+	{% if friend_state == 'Add to friends' %}
+	<li class="long-header"><a href="/add-to-friends/{{ user.username }}/" class="round green">Add to friends<span class="round">That is, if you want to add this user to your friend list.</span></a></li>
+	{% elif friend_state == 'Request is sent' %}
+    <li class="long-header"><a class="round green">Request is sent<span class="round">Request to friend already sent.</span></a></li>
+    {% else %}
+	<li class="long-header"><a href="/delete-from-friends/{{ user.username }}/" class="round green">Delete from friends<span class="round">That is, if you want to delete this user from your friend list.</span></a></li>
+	{% endif %}
+	<li><a href="/chat/{{ user.username }}/" class="round red">Message<span class="round">But only if you want to start chatting. </span></a></li>
+</ul>
+
+
+{% endblock content %}

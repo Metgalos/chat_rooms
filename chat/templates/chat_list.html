@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<a href="/"><img class="home-picture" src="{% static "images/home-icon.png" %}" alt="Icon with home picture" /></a><br />
+
+<h1 class="header-text"> Chat List</h1><br />
+<!-- Список диалогов -->
+{% for companion, message in chat_dict.items %}
+    {% if message %}
+        <div class="chat_element" onclick="window.location = '{% url 'chat' username=companion %}'">
+            <div class="float-left">
+                <img class="companion-picture" src="/media/{{ companion.picture }}" />
+            </div>
+            <h3 class="header-text">{{ companion }}</h3>
+            <div class="message_text"> <span class="message_author">{{ message.author }}</span>:{{ message.content}}<br /></div>
+            <div class="message_time">{{ message.timestamp }}</div>
+        </div><br /><br />
+    {% endif %}
+{% endfor %}
+
+{% endblock content %}
