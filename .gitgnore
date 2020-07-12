@@ -1,8 +1,0 @@
-*.pyc
-./.idea/
-./static/
-local_settings.py
-__pycache__
-bin
-venv1/
-db.sqlite3
