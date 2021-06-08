@@ -1,7 +1,7 @@
 channels==2.1.2
 channels-redis==2.3.3
 Django==1.11
-Pillow==5.4.1
+Pillow==8.2.0
 pip==19.0.3
 redis==3.2.1
 pypiwin32>=223
